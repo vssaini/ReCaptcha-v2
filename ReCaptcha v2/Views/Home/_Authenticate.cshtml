@@ -1,0 +1,43 @@
+﻿@model ReCaptchaV2.Models.HomeModel
+
+@{
+    var ajaxOptions = new AjaxOptions
+    {
+        HttpMethod = "POST",
+        InsertionMode = InsertionMode.Replace,
+        Url = Url.Action("ValidateCaptcha", "Home"),
+        UpdateTargetId = "content",
+        LoadingElementId = "loader",
+        OnBegin = "HandleBegin",
+        OnComplete = "HandleComplete",
+        OnFailure = "HandleError"
+    };
+}
+
+@using (Ajax.BeginForm("Index", "Home", ajaxOptions, new { id = "frmAuthenticate" }))
+{
+    <input type="hidden" id="hidMsgArea" value="@TempData["Message"]"/>
+    <div id="msgArea">
+        @Html.Raw(@TempData["Message"])
+    </div>
+    <div>
+        @Html.LabelFor(m => m.Username)
+        @Html.TextBoxFor(m => m.Username)
+        @Html.ValidationMessageFor(m => m.Username)
+
+        @Html.LabelFor(m => m.Password)
+        @Html.PasswordFor(m => m.Password)
+        @Html.ValidationMessageFor(m => m.Password)
+
+        @Html.HiddenFor(m => m.ReCaptchaPublicKey)
+
+        <div id="captchaContainer" class="marginTop10 marginBottom10"></div>
+
+        <button type="submit" name="command" value="">Submit</button>
+    </div>
+    <div id="loader">
+        <img src="~/Content/Images/ajax-loader.gif" alt="LoaderImg" />&nbsp; Loading
+    </div>
+}
+
+<script src="https://www.google.com/recaptcha/api.js?onload=ShowReCaptcha&render=explicit" async defer></script>
